@@ -1,0 +1,9 @@
+easy 720x1280 --practice --level=0
+medium 720x1280 --practice --level=1 --lang=en
+hard 720x1280 --practice --level=2
+midgame 720x1280 --practice --level=1 --keys=LDR
+solved 720x1280 --practice --level=0 --best
+phone-safe-area 720x1280 --practice --level=1 --safe=40,80,40,60
+small 360x640 --practice --level=1
+desktop 1280x720 --practice --level=1
+wide 1900x1000 --practice --level=2
