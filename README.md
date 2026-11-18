@@ -6,7 +6,7 @@ vanishes when its size equals its number. Clear the board in as few tilts as pos
 
 Status: phases 1a and 1b built (rules, solver, generator, 40 practice sets, screen and play version). No daily puzzle yet.
 
-- Play version: https://play.whitedrift.steefbeest.nl
+- Play version: https://play.white-drift.steefbeest.nl
 - Design: `docs/design.md`, decisions in `docs/adr/`, terms in `docs/glossary.md`, rules for code and data in
   `docs/conventions.md`.
 

@@ -1,5 +1,5 @@
 # CI: tests, debug screenshots and the web build on develop/main, superseded runs cancelled. The release web build of
-# develop is the play version on GitHub Pages (play.whitedrift.steefbeest.nl).
+# develop is the play version on GitHub Pages (play.white-drift.steefbeest.nl).
 name: CI
 
 on:

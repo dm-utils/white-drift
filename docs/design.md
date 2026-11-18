@@ -38,7 +38,7 @@ In scope:
 - Readability of tiles, groups and blocks (10.1); a calm, flat, dark look in the series style.
 - Tilts and par shown simply (3.1, `FINAL_ONLY`); no strict scoring.
 - Dutch and English.
-- Web version on GitHub Pages at https://play.whitedrift.steefbeest.nl, usable in portrait on a phone and on a desktop.
+- Web version on GitHub Pages at https://play.white-drift.steefbeest.nl, usable in portrait on a phone and on a desktop.
 - The rules engine, generator and exact solver needed to fill the pool (section 5), with a trial (5.7).
 
 Out of scope for phase 1 (designed below where marked **[later]**): binding puzzles to dates, the first day and puzzle
@@ -685,7 +685,7 @@ board) tilts; arrows and WASD tilt; taps do nothing. `_resolve_board_swipe(dir)`
 
 ## 11. Build and deployment
 
-As White Sum section 11, with the play version at https://play.whitedrift.steefbeest.nl and this `tools/shots.txt`:
+As White Sum section 11, with the play version at https://play.white-drift.steefbeest.nl and this `tools/shots.txt`:
 
 ```
 easy 720x1280 --practice --level=0
@@ -766,7 +766,7 @@ UI and deployment
 - Counter `count_final`, par, solved message with count, par and clock; dead-end message on Example 6.
 - Dutch and English complete; language survives a reload.
 - Centred column at most 720 wide on 1280x720 and 1900x1000; full width on 720x1280 and 360x640.
-- CI on `develop` green; https://play.whitedrift.steefbeest.nl loads and plays on a phone and on a PC.
+- CI on `develop` green; https://play.white-drift.steefbeest.nl loads and plays on a phone and on a PC.
 
 ### 13.2 [later] Phase 2
 
@@ -813,7 +813,7 @@ Done when: 13.1 is met.
   level stops it.
 - The `tilted` shot of section 11 became `midgame` (`--keys=LDR`).
 - Pages: the `pages` job of `.github/workflows/ci.yml` stays red (404) until GitHub Pages and the DNS name
-  `play.whitedrift.steefbeest.nl` are enabled by the project lead.
+  `play.white-drift.steefbeest.nl` are enabled by the project lead.
 
 ## 15. Open points
 
