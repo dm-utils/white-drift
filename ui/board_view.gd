@@ -66,10 +66,7 @@ func _draw_links(tiles: Array) -> void:
 			var b: Dictionary = tiles[bi]
 			if a.value != b.value:
 				continue
-			var d: Vector2 = b.pos - a.pos
-			var horizontal := absf(absf(d.x) - 1.0) < 0.02 and absf(d.y) < 0.02
-			var vertical := absf(absf(d.y) - 1.0) < 0.02 and absf(d.x) < 0.02
-			if not (horizontal or vertical):
+			if not joined(a.pos, b.pos):
 				continue
 			var col: Color = TILE_COLORS[a.value]
 			col.a = minf(a.alpha, b.alpha)
@@ -109,6 +106,14 @@ static func to_view_steps(steps: Array) -> Array:
 		elif s.kind == "vanish":
 			out.append({"kind": "vanish", "cells": s.cells})
 	return out
+
+
+## Tiles at these positions (cells) touch along an edge, so equal ones are drawn joined.
+static func joined(a: Vector2, b: Vector2) -> bool:
+	var d := b - a
+	var horizontal := absf(absf(d.x) - 1.0) < 0.02 and absf(d.y) < 0.02
+	var vertical := absf(absf(d.y) - 1.0) < 0.02 and absf(d.x) < 0.02
+	return horizontal or vertical
 
 
 # --- state -------------------------------------------------------------------------------------------------------
