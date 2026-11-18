@@ -4,7 +4,7 @@ A daily puzzle game in the White series. Tiles marked 2, 3 and 4 and a few fixed
 the whole board: every tile slides until it stops against the edge, a block or another tile. A group of equal tiles
 vanishes when its size equals its number. Clear the board in as few tilts as possible.
 
-Status: phase 1 (look and feel) designed. Practice puzzles in three levels; no daily puzzle yet.
+Status: phase 1a built (rules, solver, generator, 40 practice sets); the screen follows in phase 1b. No daily puzzle yet.
 
 - Play version (from phase 1b): https://play.whitedrift.steefbeest.nl
 - Design: `docs/design.md`, decisions in `docs/adr/`, terms in `docs/glossary.md`, rules for code and data in

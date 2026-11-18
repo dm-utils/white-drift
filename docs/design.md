@@ -1,6 +1,6 @@
 # White Drift - design
 
-Status: phase 1 (look and feel) designed, not built. Later phases are designed in outline and marked **[later]**;
+Status: phase 1 (look and feel) designed; phase 1a (rules, solver, generator, trial, pool) built, phase 1b (UI) not. Later phases are designed in outline and marked **[later]**;
 they are not built in phase 1.
 This document describes the game as it must be built. Decisions with their trade-offs are in `docs/adr/`; terms are
 defined in `docs/glossary.md`; code and test rules are in `docs/conventions.md`.
@@ -457,7 +457,56 @@ medium; M3 at most 2 hours; a decision on a `solutions` limit for hard.
 
 ### 5.9 Trial results
 
-To be filled in by the developer after the phase 1 trial: settings used, M1, the M2 table per level, P1-P4, findings.
+Phase 1a, 2026-11-18, kit `v0.2.0`, Godot 4.7.2, one core per process. Settings: the starting values of section 4,
+unchanged. Trial seeds `white-drift-trial|<n>|<level>`, `n = 0 .. 49`
+(`godot --headless --path . -s res://tools/measure.gd -- --seeds=50`).
+
+**M1 throughput.** `tilt()`: about 44 000 per second (6x6, 4 blocks, 12-16 tiles). Search: about 24 000 states per
+second (a hard puzzle takes about 550 states).
+
+**M2 per level.**
+
+| | Easy | Medium | Hard |
+|---|---|---|---|
+| Board | 5x5 | 6x6 | 6x6 |
+| Non-fallback puzzles (of 50) | 50 | 50 | 50 |
+| Candidates tried, median / max | 2 / 9 | 7 / 34 | 44 / 204 |
+| Candidates with a solution within the band maximum | 54% | 29% | 30% |
+| Candidates that hit the state cap | 0% | 0% | 0% |
+| Tiles / blocks at start, median | 9 / 2 | 12 / 3 | 15 / 4 |
+| Par, median | 3 | 5 | 8 |
+| Par spread (par:count) | 3:26 4:24 | 5:29 6:14 7:7 | 8:31 9:12 10:5 11:2 |
+| `solutions`, median / max | 2 / 8 | 3 / 8 | 3 / 21 |
+| `states`, median / max | 31 / 63 | 122 / 402 | 800 / 2933 |
+| Greedy bot solves the start (of 50) | 6 | 0 | 0 |
+| Build time per puzzle, median / max | < 0.1 s / < 0.1 s | < 0.1 s / 0.1 s | 0.1 s / 0.5 s |
+
+**Checks.**
+
+| Check | Result |
+|---|---|
+| P1 at least 40 of 50 non-fallback | met on all levels (50 of 50) |
+| P2 median par strictly increasing | met: 3 < 5 < 8 |
+| P3 pool within 2 hours | met: 9 s for 50 seeds x 3 levels, so about 7 s for the 40 sets on one process |
+| P4 reported | see M2 rows `solutions` and greedy solved |
+
+**Findings.**
+
+- Search spaces are tiny (at most about 3000 states per candidate against caps of 50 000 to 200 000), so the caps
+  never trigger and the candidate limits are far above what is needed. No remedy from 5.7 or ADR 0004 was needed;
+  plan B (reverse building) is not required.
+- Par concentrates on the low end of each band (easy 3, medium 5, hard 8 are the modes). The bands are filled but
+  the upper values are rare (hard par 11: 2 of 50). For harder puzzles in phase 3, raise the group count or the band
+  rather than the candidate count.
+- Hard puzzles have a median of 3 shortest solutions and up to 21; the greedy filter keeps medium and hard puzzles
+  out of greedy's reach (0 of 50). Easy has no greedy filter and 6 of 50 are greedy-solvable.
+
+**Pool.** `data/practice.json`: 40 sets of three, no fallback puzzles, `tools/verify_puzzles.gd` confirms par,
+`solutions` and path for all 120. Par counts in the pool: easy 3:28 4:12; medium 5:27 6:9 7:4; hard 8:27 9:7 10:5 11:1.
+
+**Deviations from the design.** The generator result also carries `solvable` and `capped` (candidates with a solution
+and candidates that hit the cap), used by `tools/measure.gd`; `measure.gd` accepts `--verbose` and `--cfg=<json>` to
+try other parameters. `DriftGame.convert` also returns `fallback`.
 
 ## 6. Precomputed puzzles
 
@@ -506,7 +555,7 @@ For Example 5 the solver must report `solutions` 2 (`DR` and `UR`) and path `DR`
 - `tools/build_puzzles.gd` extends `WhitePrecompute`: `_game_id()` `"white-drift"`; `_generate` returns
   `DriftGenerator.to_json(DriftGenerator.generate(seed_value, level))`; `_summary` prints
   ` par <list> solutions <list>` and ` FALLBACK` when any puzzle has `fallback`.
-- Parallel build and merge as White Sum (8 processes of 5 sets, `--merge` into one file, verify, copy to `data/`;
+- Parallel build and merge as White Sum (at most 3 processes on a shared machine, the whole pool takes seconds, `--merge` into one file, verify, copy to `data/`;
   conventions, Puzzle data).
 - `tools/verify_puzzles.gd`: re-solves every puzzle with its level's cap and checks `par`, `solutions`, `exact` and
   that `path` clears the board; exit 1 on any mismatch.

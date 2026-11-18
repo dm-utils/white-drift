@@ -97,15 +97,16 @@ timeout 300 godot --headless --path . res://tests/run_tests.tscn -- --min-checks
 godot --headless --path . -s res://tools/measure.gd -- --seeds=50
 ```
 
-- Phase 1: build the pool in parallel, merge, verify, then copy to `data/`:
+- Phase 1: build the pool, merge, verify, then copy to `data/`. The whole pool takes seconds; when building in parallel
+  on a shared machine use at most 3 Godot processes:
 
 ```bash
-for k in 0 1 2 3 4 5 6 7; do
-  godot --headless --path . -s res://tools/build_puzzles.gd -- --practice=5 --start=$((k*5)) --out=build/practice_$k.json &
-done; wait
-for k in 0 1 2 3 4 5 6 7; do
-  godot --headless --path . -s res://tools/build_puzzles.gd -- --merge=build/practice_$k.json --into=build/practice.json
-done
+G="godot --headless --path . -s res://tools/build_puzzles.gd --"
+$G --practice=14 --start=0 --out=build/p0.json &
+$G --practice=13 --start=14 --out=build/p1.json &
+$G --practice=13 --start=27 --out=build/p2.json &
+wait
+for k in 0 1 2; do $G --merge=build/p$k.json --into=build/practice.json; done
 godot --headless --path . -s res://tools/verify_puzzles.gd -- --file=build/practice.json
 ```
 
