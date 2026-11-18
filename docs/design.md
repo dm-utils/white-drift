@@ -1,6 +1,6 @@
 # White Drift - design
 
-Status: phase 1 (look and feel) designed; phase 1a (rules, solver, generator, trial, pool) built, phase 1b (UI) not. Later phases are designed in outline and marked **[later]**;
+Status: phase 1 (look and feel) designed; phases 1a (rules, solver, generator, trial, pool) and 1b (UI, play version) built. Later phases are designed in outline and marked **[later]**;
 they are not built in phase 1.
 This document describes the game as it must be built. Decisions with their trade-offs are in `docs/adr/`; terms are
 defined in `docs/glossary.md`; code and test rules are in `docs/conventions.md`.
@@ -611,7 +611,7 @@ Abstract, flat, dark and calm (ADR 0005).
 |---|---|
 | Board | `WhiteTileView` defaults (`#232933`, grid `#2C333F`). |
 | Tile | Flat rounded square (radius 18%, gap 8%), colour by value as White Tally: 2 `#4C7FD6`, 3 `#E3943A`, 4 `#3FA58A`. |
-| Marks | `v` round dots evenly spaced on a small ring around the tile centre, starting at the top: 2 = top and bottom, 3 = a triangle pointing up, 4 = a diamond (top, right, bottom, left). Ring radius 20% of the cell, dot diameter 15%, colour `#1C1F24` at 85% opacity. Not dice layouts (dice put 2 and 3 on the diagonal and 4 in the corners), and no numerals. |
+| Marks | `v` round dots evenly spaced on a small ring around the tile centre, starting at the top: 2 = top and bottom, 3 = a triangle pointing up, 4 = a diamond (top, right, bottom, left). Ring radius 26% of the cell, dot diameter 17%, colour `#1C1F24` at 85% opacity; the ring itself is drawn as a faint 2 px line (30% of the dot opacity) so that the dots read as a ring (values as built, see 14.3). Not dice layouts (dice put 2 and 3 on the diagonal and 4 in the corners), and no numerals. |
 | Joins | As White Tally: neighbouring tiles of the same value joined by a bar in the tile colour, 40% of the cell wide, drawn in `_draw_links`; diagonal contact shows no join. |
 | Block | A recessed square: fill `#151920`, 2 px border `#3A4250`, same radius and gap as a tile; clearly not a tile. |
 | Ignored tilt | The whole board nudges 6 px towards the swipe and back in 150 ms (kit `nudge`). |
@@ -691,7 +691,7 @@ As White Sum section 11, with the play version at https://play.whitedrift.steefb
 easy 720x1280 --practice --level=0
 medium 720x1280 --practice --level=1 --lang=en
 hard 720x1280 --practice --level=2
-tilted 720x1280 --practice --level=1 --keys=D
+midgame 720x1280 --practice --level=1 --keys=LDR
 solved 720x1280 --practice --level=0 --best
 phone-safe-area 720x1280 --practice --level=1 --safe=40,80,40,60
 small 360x640 --practice --level=1
@@ -699,7 +699,7 @@ desktop 1280x720 --practice --level=1
 wide 1900x1000 --practice --level=2
 ```
 
-On a puzzle where `D` happens to be ignored, the `tilted` shot shows the start; that is acceptable for a look check.
+`midgame` replays `LDR` on practice set 1 (medium), which are all effective tilts there; it replaces the designed `tilted` shot.
 
 ## 12. Roadmap
 
@@ -801,6 +801,19 @@ Done when: tests green in CI, P1-P3 met, P4 reported, pool verified.
 4. `tools/shots.txt` and the full CI template; Pages on `develop`.
 
 Done when: 13.1 is met.
+
+### 14.3 Phase 1b as built (deviations)
+
+- Ring marks: the first values (ring 20%, dot 15%) looked cramped and read like dice faces on the first screenshots. Built:
+  ring radius 26%, dot diameter 17%, plus a faint ring line (2 px, 30% of the dot opacity). Constants at the top of
+  `ui/board_view.gd` (`RING_RADIUS`, `DOT_DIAMETER`, `RING_PX`, `RING_ALPHA`).
+- `DriftBoardView` has the pure helpers `dot_offsets(value)` and `joined(a, b)` (tested) and `play_tilt(before, dir)`,
+  which Best route and `update_attempt` share.
+- Best route (`ui/main.gd`) replays the stored path from the start with the input locked (as White Tally); leaving the
+  level stops it.
+- The `tilted` shot of section 11 became `midgame` (`--keys=LDR`).
+- Pages: the `pages` job of `.github/workflows/ci.yml` stays red (404) until GitHub Pages and the DNS name
+  `play.whitedrift.steefbeest.nl` are enabled by the project lead.
 
 ## 15. Open points
 
