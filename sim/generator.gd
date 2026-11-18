@@ -26,6 +26,8 @@ static func generate_with(seed_value: int, cfg: Dictionary) -> Dictionary:
 	var best: Dictionary = {}
 	var best_key: Array = []
 	var tried := 0
+	var solvable := 0
+	var capped := 0
 	for t in int(cfg.candidates):
 		tried += 1
 		var nb := rng.range_int(cfg.blocks[0], cfg.blocks[1])
@@ -51,14 +53,18 @@ static func generate_with(seed_value: int, cfg: Dictionary) -> Dictionary:
 		if not board.is_stable(s) or _kinds(tiles) < int(cfg.values) or board.is_dead_end(s):
 			continue
 		var r := DriftSolver.solve(board, s, band[1], cfg.cap)
+		capped += 1 if r.capped else 0
 		if r.par < 0:
 			continue
+		solvable += 1
 		var accepted: bool = r.par >= band[0]
 		if accepted and int(cfg.gap) > 0:
 			var gr := DriftSolver.greedy(board, s, 3 * band[1])
 			if gr.solved and gr.moves < r.par + int(cfg.gap):
 				accepted = false
 		var result := _result(board, r, false, tried)
+		result.solvable = solvable
+		result.capped = capped
 		if accepted:
 			return result
 		var key := [maxi(band[0] - r.par, 0), r.solutions, tiles.size()]
@@ -68,9 +74,11 @@ static func generate_with(seed_value: int, cfg: Dictionary) -> Dictionary:
 	if best.is_empty():
 		var board := DriftBoard.create(w, h)
 		return {"board": board, "par": 0, "exact": false, "solutions": 0, "path": PackedInt32Array(), "states": 0,
-				"tried": tried, "fallback": true}
+				"tried": tried, "solvable": 0, "capped": capped, "fallback": true}
 	best.fallback = true
 	best.tried = tried
+	best.solvable = solvable
+	best.capped = capped
 	return best
 
 
