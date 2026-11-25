@@ -33,4 +33,16 @@ Debug screenshots of the scenarios in `tools/shots.txt` (needs xvfb):
 addons/white_kit/tools/shots.sh run . tools/shots.txt build/shots
 ```
 
+## iOS
+
+TestFlight builds come from the separate `ios-release` repository (`apps/white-drift`): Godot exports the Xcode project
+on Linux, a Mac archives, signs and uploads it. The preset is `iOS` in `export_presets.cfg`; bundle id
+`nl.steefbeest.whitedrift`.
+
+Regenerate the app icons after a change to `icon.svg`:
+
+```bash
+godot --headless --path . -s res://tools/ios_icons.gd
+```
+
 All rights reserved.
