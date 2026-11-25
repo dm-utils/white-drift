@@ -9,3 +9,4 @@ func _run() -> void:
 	await preload("res://tests/ui_tests.gd").new().run(check, self)
 	await preload("res://tests/independent_tests.gd").new().run(check, self)
 	await preload("res://tests/tester_ui_tests.gd").new().run(check, self)
+	await preload("res://tests/ios_tests.gd").new().run(check, self)
